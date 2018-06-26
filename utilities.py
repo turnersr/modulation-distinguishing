@@ -12,7 +12,11 @@ from sklearn.svm import SVC
 from sklearn.datasets import load_digits
 from sklearn.model_selection import learning_curve
 from sklearn.model_selection import ShuffleSplit
+from collections import defaultdict
 import numpy as np
+
+import modulation as modulate
+import channel as chan
 
 def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
                         n_jobs=1, train_sizes=np.linspace(.1, 1.0, 5), scoreFunction="accuracy"):
@@ -86,3 +90,26 @@ def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
 
     plt.legend(loc="best")
     return plt
+
+def genKSignals(K, mode, size, snr):
+    X = np.zeros((K, size),dtype=np.complex)
+    for i in range(0, K):
+        V = modulate.genmodsig(mode, size)
+        X[i] = chan.awgn(V, snr)
+    return X
+
+def genYTargets(sampleSize, nSignals):
+    Y = np.concatenate([np.zeros(sampleSize)+k for k in range(0,nSignals)])
+    return Y
+
+def createDataset(modulationMethodList, burstSize, sampleSize, snrRange):
+    snrToDatasetList = defaultdict(list)
+    snrToMatrixDataset = {}
+
+    for snr in snrRange:
+        for mode in modulationMethodList:
+            snrToDatasetList[snr].append(genKSignals(sampleSize, mode, burstSize, snr))
+        snrToMatrixDataset[snr] = np.concatenate(snrToDatasetList[snr])
+
+    del snrToDatasetList
+    return snrToMatrixDataset
