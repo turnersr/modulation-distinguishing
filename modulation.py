@@ -84,8 +84,5 @@ def genmodsig(modulationType,sampleNo):
     symbol = np.floor(np.random.rand(sampleNo)*symbolMap.size)
     symbol = symbol.astype(int)
 
-    #fix(rand(sampleNo,1)*size(symbolMap,1)) + 1,
-    # Map the signal samples to symbols
-    
     sigOut = symbolMap[symbol]
     return sigOut
