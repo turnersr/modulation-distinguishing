@@ -99,7 +99,7 @@ def genKSignals(K, mode, size, snr):
     return X
 
 def genYTargets(sampleSize, nSignals):
-    Y = np.concatenate([np.zeros(sampleSize)+k for k in range(0,nSignals)])
+    Y = np.concatenate([np.zeros(sampleSize, dtype=np.int)+k for k in range(0,nSignals)])
     return Y
 
 def createDataset(modulationMethodList, burstSize, sampleSize, snrRange):
